@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>PrimeFaces Test</title>
+        <h:outputScript name="test.js" />
+        <h:outputStylesheet name="test.css" />
+    </h:head>
+    <h:body>
+        <h:form id="frmTest">
+            <p:commandButton
+                    class="form-btn" ajax="true"
+                    value="Xóa khách hàng"
+                    action="#{testView.deleteCustomer}"
+                    update="dataTableDetail"
+                    oncomplete="if (#{facesContext.renderResponse}) { #{testView.selectedIds}.clear(); }"
+                    process="@this dataTableDetail">
+            </p:commandButton>
+
+            <p:dataTable id="dataTableDetail" var="data" rowIndexVar="rowIndex"
+                         selection="#{testView.selectedIds}"
+                         selectionMode="multiple" paginator="true" rows="20" sortMode="multiple"
+                         scrollable="true" styleClass="dataTable" emptyMessage="Không có kết quả nào"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         paginatorPosition="bottom" rowsPerPageTemplate="5,10,15" disabledSelection="false"
+                         value="#{testView.list}" rowKey="#{data.id}">
+
+                <p:column selectionMode="multiple" headerText="Checkbox" style="width:30px;text-align:center;">
+                    <f:facet name="header">
+                        <p:selectBooleanCheckbox value="#{testView.allSelected}">
+                            <p:ajax listener="#{testView.selectedOptions2Changed}" />
+                        </p:selectBooleanCheckbox>
+
+                        <p:selectBooleanCheckbox value="#{testView.allSelected}">
+                            <p:ajax event="change" listener="#{testView.selectAll(testView.allSelected)}"
+                                    update="dataTableDetail" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+                    <p:selectBooleanCheckbox value="#{testView.selected}">
+                        <p:ajax event="change" listener="#{testView.selectOnly(data.id)}"
+                                process="@this"/>
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="STT" style="width:30px;text-align:center;">
+                    <h:outputText value="#{rowIndex + 1}"/>
+                </p:column>
+                <p:column headerText="Tên khách hàng" style="width: 100px; text-align:center;">
+                    <h:outputText value="#{data.name}" />
+                </p:column>
+                <p:column headerText="Tên nghệ sĩ" style="width: 100px; text-align:center;">
+                    <h:outputText value="#{data.artist}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+
+
+    </h:body>
+</html>
